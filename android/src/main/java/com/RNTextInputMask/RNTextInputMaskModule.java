@@ -65,6 +65,8 @@ public class RNTextInputMaskModule extends ReactContextBaseJavaModule {
       onResult.invoke(output);
     }
 
+    private MaskedTextChangedListener textChangedListener;
+
     @ReactMethod
     public void setMask(final int view, final String mask) {
       final Activity currentActivity = this.reactContext.getCurrentActivity();
@@ -79,7 +81,12 @@ public class RNTextInputMaskModule extends ReactContextBaseJavaModule {
               public void execute(NativeViewHierarchyManager nativeViewHierarchyManager) {
                   EditText editText = (EditText)nativeViewHierarchyManager.resolveView(view);
 
-                  final MaskedTextChangedListener listener = new MaskedTextChangedListener(
+                  if (textChangedListener != null) {
+                    editText.removeTextChangedListener(textChangedListener);
+                    textChangedListener = null;
+                  }
+
+                  textChangedListener = new MaskedTextChangedListener(
                     mask,
                     true,
                     editText,
@@ -91,7 +98,7 @@ public class RNTextInputMaskModule extends ReactContextBaseJavaModule {
                     }
                   );
 
-                  editText.addTextChangedListener(listener);
+                  editText.addTextChangedListener(textChangedListener);
               }
           });
         }
