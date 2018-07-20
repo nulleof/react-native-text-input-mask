@@ -2,6 +2,7 @@ package com.RNTextInputMask;
 
 import android.app.Activity;
 import android.widget.EditText;
+import android.text.TextWatcher;
 import com.facebook.react.uimanager.UIManagerModule;
 import com.facebook.react.uimanager.UIBlock;
 import com.facebook.react.uimanager.NativeViewHierarchyManager;
@@ -97,6 +98,11 @@ public class RNTextInputMaskModule extends ReactContextBaseJavaModule {
                         }
                     }
                   );
+
+                  if (editText.getTag() != null) {
+                      editText.removeTextChangedListener((TextWatcher) editText.getTag());
+                  }
+                  editText.setTag(textChangedListener);
 
                   editText.addTextChangedListener(textChangedListener);
               }

@@ -23,7 +23,7 @@ export default class TextInputMask extends Component {
         this.props.mask &&
         this.props.value) {
       mask(this.props.mask, '' + this.props.value, text =>
-        this.input.setNativeProps({ text }),
+        this.input && this.input.setNativeProps({ text }),
       )
     }
 
@@ -34,13 +34,13 @@ export default class TextInputMask extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.value != nextProps.value) {
+    if (nextProps.mask && (this.props.value !== nextProps.value)) {
       mask(this.props.mask, '' + nextProps.value, text =>
-        this.input.setNativeProps({ text })
+      this.input && this.input.setNativeProps({ text })
       );
     }
 
-    if (this.props.mask != nextProps.mask) {
+    if (this.props.mask !== nextProps.mask) {
       setMask(findNodeHandle(this.input), nextProps.mask)
     }
   }
@@ -56,9 +56,13 @@ export default class TextInputMask extends Component {
         }
       }}
       onChangeText={masked => {
-        const _unmasked = unmask(this.props.mask, masked, unmasked => {
-          this.props.onChangeText && this.props.onChangeText(masked, unmasked)
-        })
+        if (this.props.mask) {
+          const _unmasked = unmask(this.props.mask, masked, unmasked => {
+            this.props.onChangeText && this.props.onChangeText(masked, unmasked)
+          })
+        } else {
+          this.props.onChangeText && this.props.onChangeText(masked)
+        }
       }}
     />);
   }
